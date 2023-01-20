@@ -31,7 +31,7 @@ def transfer(source, destination, amount, asset, config, dry_run):
     parsed_config = TransferConfig.from_yaml_file(config)
     transfer_helper = Transfer(parsed_config)
     result = transfer_helper.transfer_with_contract(
-        source_wallet=source, asset=asset, destination=destination, amount=amount, dry_run=dry_run
+        source_wallet=source, asset=asset, destination=destination, amount=float(amount), dry_run=dry_run
     )
     click.echo(result)
 
