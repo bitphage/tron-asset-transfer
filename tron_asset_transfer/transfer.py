@@ -1,11 +1,12 @@
 import logging
-from typing import Any, Dict
+import random
+from typing import Any, Dict, List
 
-import tronpy
 import yaml
 from pydantic import BaseModel
-from tronpy import Tron
+from tronpy import Contract, Tron
 from tronpy.keys import PrivateKey
+from tronpy.providers import HTTPProvider
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +24,7 @@ class TransferConfig(BaseModel):
     my_wallets: Dict[str, Wallet]
     # Aliases for destinations
     destinations: Dict[str, str]
+    nodes: List[str]
 
     @classmethod
     def from_yaml_file(cls, path):
@@ -34,10 +36,11 @@ class TransferConfig(BaseModel):
 class Transfer:
     def __init__(self, config: TransferConfig):
         self._config = config
-        self._client = Tron()
+        provider = HTTPProvider(random.choice(self._config.nodes))  # noqa: DUO102
+        self._client = Tron(provider)
 
     @staticmethod
-    def amount_to_int(amount: float, contract: tronpy.Contract) -> int:
+    def amount_to_int(amount: float, contract: Contract) -> int:
         """Convert amount to integer value used by contracts."""
         precision = contract.functions.decimals()
         return int(amount * 10 ** precision)
