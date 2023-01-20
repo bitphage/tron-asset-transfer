@@ -1,0 +1,20 @@
+{
+  "template": "https://github.com/bitphage/cookiecutter-base-py-project",
+  "commit": "5923c05770d5f592976367c5f022487a19c0f656",
+  "checkout": null,
+  "context": {
+    "cookiecutter": {
+      "project_name": "tron-asset-transfer",
+      "package_name": "tron_asset_transfer",
+      "version": "1.0.0",
+      "description": "Helpers for making tron transactions",
+      "author": "bitphage",
+      "email": "vvk@vvk.pp.ru",
+      "full_name": "Vladimir Kamarzin",
+      "license": "MIT",
+      "line_width": "120",
+      "_template": "https://github.com/bitphage/cookiecutter-base-py-project"
+    }
+  },
+  "directory": null
+}
