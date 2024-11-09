@@ -1,6 +1,6 @@
 # tron-asset-transfer
 
-Helpers for making tron transactions
+Helpers for making tron transactions (asset transfers). Supported transfers of TRC-20 and TRX.
 
 ## Installation
 
