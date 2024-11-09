@@ -4,7 +4,7 @@ build-backend = "poetry.masonry.api"
 
 [tool.poetry]
 name = "tron_asset_transfer"
-version = "0.1.0"
+version = "1.0.0"
 description = "Helpers for making tron transactions"
 license = "MIT"
 authors = ["Vladimir Kamarzin <vvk@vvk.pp.ru>"]
