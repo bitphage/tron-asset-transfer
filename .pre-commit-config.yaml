@@ -36,8 +36,8 @@ repos:
         --pre-summary-newline,
       ]
 
-- repo: https://github.com/humitos/mirrors-autoflake
-  rev: v1.1
+- repo: https://github.com/PyCQA/autoflake
+  rev: v2.3.1
   hooks:
     - id: autoflake
       args: ['--in-place', '--remove-all-unused-imports', '--remove-unused-variable']
@@ -73,3 +73,7 @@ repos:
   hooks:
     - id: mypy
       args: [--ignore-missing-imports, --check-untyped-defs, --disallow-incomplete-defs]
+      additional_dependencies:
+        [
+          "types-PyYAML"
+        ]

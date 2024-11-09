@@ -18,7 +18,7 @@ def main():
 @click.option("--dry-run", is_flag=True)
 def transfer(source, destination, amount, asset, config, dry_run):
     """
-    Transfer some AMOUNT of ASSET.
+    Transfer some AMOUNT of ASSET using TRC-20 contract transfer.
 
     SOURCE must be a key in `my_wallets`
 
@@ -32,6 +32,30 @@ def transfer(source, destination, amount, asset, config, dry_run):
     transfer_helper = Transfer(parsed_config)
     result = transfer_helper.transfer_with_contract(
         source_wallet=source, asset=asset, destination=destination, amount=float(amount), dry_run=dry_run
+    )
+    click.echo(result)
+
+
+@main.command()
+@click.argument("source")
+@click.argument("destination")
+@click.argument("amount")
+@click.option("--config", default="config.yaml")
+@click.option("--dry-run", is_flag=True)
+def transfer_trx(source, destination, amount, config, dry_run):
+    """
+    Transfer AMOUNT of TRX.
+
+    SOURCE must be a key in `my_wallets`
+
+    DESTINATION must be a key in `destinations`
+
+    AMOUNT is a regular amount like 10.55 () - will be automatically converted to proper integer value
+    """
+    parsed_config = TransferConfig.from_yaml_file(config)
+    transfer_helper = Transfer(parsed_config)
+    result = transfer_helper.transfer_trx(
+        source_wallet=source, destination=destination, amount=float(amount), dry_run=dry_run
     )
     click.echo(result)
 

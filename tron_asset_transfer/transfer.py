@@ -10,6 +10,8 @@ from tronpy.providers import HTTPProvider
 
 logger = logging.getLogger(__name__)
 
+TRX_PRECISION = 6
+
 
 class Wallet(BaseModel):
     # HEX-encoded privkey
@@ -40,17 +42,33 @@ class Transfer:
         self._client = Tron(provider)
 
     @staticmethod
-    def amount_to_int(amount: float, contract: Contract) -> int:
+    def amount_to_int(amount: float, precision: int) -> int:
+        return int(amount * 10**precision)
+
+    @staticmethod
+    def amount_to_int_by_contract(amount: float, contract: Contract) -> int:
         """Convert amount to integer value used by contracts."""
         precision = contract.functions.decimals()
-        return int(amount * 10 ** precision)
+        return Transfer.amount_to_int(amount, precision)
+
+    @staticmethod
+    def send_transaction(txn: Any, dry_run: bool = False) -> Any:
+        if dry_run:
+            return txn
+        result = txn.broadcast()
+        return result.wait()
 
     def transfer_with_contract(
-        self, source_wallet: str, asset: str, destination: str, amount: float, dry_run: bool = False,
+        self,
+        source_wallet: str,
+        asset: str,
+        destination: str,
+        amount: float,
+        dry_run: bool = False,
     ) -> Any:
         contract_addr = self._config.contracts[asset]
         contract = self._client.get_contract(contract_addr)
-        int_amount = self.amount_to_int(amount, contract)
+        int_amount = self.amount_to_int_by_contract(amount, contract)
         txn = (
             contract.functions.transfer(self._config.destinations[destination], int_amount)
             .with_owner(self._config.my_wallets[source_wallet].pubkey)
@@ -58,7 +76,23 @@ class Transfer:
             .build()
             .sign(PrivateKey(bytes.fromhex(self._config.my_wallets[source_wallet].privkey)))
         )
-        if dry_run:
-            return txn
-        result = txn.broadcast()
-        return result.wait()
+        return self.send_transaction(txn, dry_run)
+
+    def transfer_trx(
+        self,
+        source_wallet: str,
+        destination: str,
+        amount: float,
+        dry_run: bool = False,
+    ) -> Any:
+        int_amount = self.amount_to_int(amount, TRX_PRECISION)
+        txn = (
+            self._client.trx.transfer(
+                from_=self._config.my_wallets[source_wallet].pubkey,
+                to=self._config.destinations[destination],
+                amount=int_amount,
+            )
+            .build()
+            .sign(PrivateKey(bytes.fromhex(self._config.my_wallets[source_wallet].privkey)))
+        )
+        return self.send_transaction(txn, dry_run)
