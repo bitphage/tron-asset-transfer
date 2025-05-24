@@ -29,7 +29,7 @@ pydantic = "^1.10.4"
 pyyaml = "^6.0"
 setuptools = "^75.3.0"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 pre-commit = "^2.2.0"
 pytest = "^6"
 pytest-cov = "^2.7"
